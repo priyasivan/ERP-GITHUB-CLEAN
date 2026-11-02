@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Event</title>
+</head>
+
+<body>
+
+<h2>Add Event</h2>
+
+<form method="POST">
+
+Title<br>
+<input type="text" name="title" value="{{ event.title }}" required><br><br>
+
+Description<br>
+<textarea name="description" required>{{ event.description }}</textarea><br><br>
+
+Event Date<br>
+<input type="date" name="event_date" value="{{ event.event_date }}" required><br><br>
+
+Venue<br>
+<input type="text" name="venue" value="{{ event.venue }}" required><br><br>
+
+<button type="submit">Update Event</button>
+
+</form>
+
+</body>
+</html>

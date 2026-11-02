@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Time Table</title>
+
+    <style>
+        body{
+            font-family:Arial;
+            background:#f4f4f4;
+        }
+
+        .container{
+            width:95%;
+            margin:30px auto;
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 0 10px lightgray;
+        }
+
+        h2{
+            color:#b30000;
+        }
+
+        .btn{
+            background:#b30000;
+            color:white;
+            padding:10px 15px;
+            text-decoration:none;
+            border-radius:5px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:20px;
+        }
+
+        th{
+            background:#b30000;
+            color:white;
+            padding:10px;
+        }
+
+        td{
+            padding:10px;
+            border-bottom:1px solid #ddd;
+            text-align:center;
+        }
+
+        .edit{
+            color:blue;
+            text-decoration:none;
+        }
+
+        .delete{
+            color:red;
+            text-decoration:none;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+    <h2>Time Table Management</h2>
+    <div>
+        <a href="/dashboard" class="btn" style="background:#6c757d;">← Dashboard</a>
+        <a href="/day-order-calendar" class="btn" style="background:#0d6efd;">📅 Day Order Calendar</a>
+        <a href="/add-timetable" class="btn">+ Add Period</a>
+    </div>
+</div>
+
+<table>
+
+<tr>
+    <th>Course</th>
+    <th>Sem / Sec</th>
+    <th>Day Order</th>
+    <th>Period</th>
+    <th>Time</th>
+    <th>Subject</th>
+    <th>Staff</th>
+    <th>Action</th>
+</tr>
+
+{% for row in timetables %}
+
+<tr>
+
+<td>{{ row.course_name }}</td>
+<td>Sem {{ row.semester }} - {{ row.section }}</td>
+<td><strong style="color:#b30000;">Day Order {{ row.day_order }}</strong></td>
+<td>Period {{ row.period_no }}</td>
+<td>{{ row.start_time_fmt }} - {{ row.end_time_fmt }}</td>
+<td>{{ row.subject_name }}</td>
+<td>{{ row.staff_name }}</td>
+
+<td>
+<a href="/delete-timetable/{{ row.timetable_id }}" class="delete" onclick="return confirm('Delete this timetable period?');">
+Delete
+</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Subject List</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+margin:30px;
+}
+
+h2{
+color:#b30000;
+}
+
+button{
+background:#b30000;
+color:white;
+padding:10px 20px;
+border:none;
+cursor:pointer;
+margin-bottom:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th{
+background:#b30000;
+color:white;
+padding:10px;
+}
+
+td{
+padding:10px;
+border:1px solid #ddd;
+}
+
+a{
+text-decoration:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="/dashboard" class="btn btn-outline-primary mb-3">
+    ← Back to Dashboard
+</a>
+
+<a href="/add-subject">
+<button>Add New Subject</button>
+</a>
+
+<table>
+
+<tr>
+<th>Subject Code</th>
+<th>Subject Name</th>
+<th>Department</th>
+<th>Semester</th>
+<th>Edit</th>
+<th>Delete</th>
+</tr>
+
+{% for s in subjects %}
+
+<tr>
+
+<td>{{ s.subject_code }}</td>
+<td>{{ s.subject_name }}</td>
+<td>{{ s.dept_code }}</td>
+<td>{{ s.semester }}</td>
+
+<td>
+<a href="{{ url_for('edit_subject', id=loop.index) }}">Edit</a>
+</td>
+<td>
+<a href="{{ url_for('delete_subject', id=loop.index) }}" onclick="return confirm('Delete this subject?');">Delete</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - SXC ERP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: #f5f6f8;
+            color: #222;
+        }
+
+        .header {
+            height: 65px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .logo {
+            color: #c91525;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .portal {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .notif-bell {
+            position: relative;
+            color: #c91525;
+            font-size: 22px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .staff {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #c91525;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #c91525;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+        }
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 65px);
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #c91525;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            padding: 13px 22px;
+            font-size: 13.5px;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active {
+            background: white;
+            color: #c91525;
+            border-radius: 0 8px 8px 0;
+            font-weight: 700;
+        }
+
+        .sidebar .logout {
+            margin-top: auto;
+            margin-bottom: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 15px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 28px 32px;
+            max-width: 1280px;
+        }
+
+        .welcome h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .welcome p {
+            color: #64748b;
+            margin-top: 6px;
+            font-size: 14px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 22px;
+            text-decoration: none;
+            color: #1e293b;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            border-color: #c91525;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(201, 21, 37, 0.08);
+        }
+
+        .icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            background: #fff0f1;
+            color: #c91525;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 14px;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 16.5px;
+            font-weight: 700;
+        }
+
+        .card p {
+            margin: 6px 0 0;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .card.featured {
+            border-left: 4px solid #c91525;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .sidebar {
+                width: 180px;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <div class="logo">ST. XAVIER'S COLLEGE ERP</div>
+        <div class="portal">Staff Portal &bull; Faculty Dashboard</div>
+    </div>
+
+    <div class="header-right">
+        <a href="/staff-notifications" class="notif-bell" title="Notifications">
+            🔔
+        </a>
+
+        <div class="staff">
+            <div class="profile-icon">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            {{ session.get("staff_name", "Staff") }}
+        </div>
+    </div>
+</div>
+
+<div class="layout">
+
+    <div class="sidebar">
+        <a href="/staff-dashboard" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="/staff-students"><i class="bi bi-people-fill"></i> View Students</a>
+        <a href="/staff-timetable"><i class="bi bi-calendar3"></i> Timetable</a>
+        <a href="/staff-exam-timetable"><i class="bi bi-journal-text"></i> Exam Timetable</a>
+        <a href="/staff-attendance"><i class="bi bi-check2-square"></i> Take Attendance</a>
+        <a href="/staff-view-attendance"><i class="bi bi-card-checklist"></i> View Attendance</a>
+        <a href="/staff-circulars"><i class="bi bi-megaphone-fill"></i> Circulars</a>
+        <a href="/staff-notifications"><i class="bi bi-bell-fill"></i> Notifications</a>
+        <a href="/staff-profile"><i class="bi bi-person-circle"></i> Profile</a>
+        <a href="/staff-logout" class="logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+
+    <div class="content">
+
+        <div class="welcome">
+            <h1>Faculty Dashboard</h1>
+            <p>Welcome back, <b>{{ session.get("staff_name", "Staff") }}</b>. Manage attendance, check schedules, and communicate with students.</p>
+        </div>
+
+        <div class="dashboard-grid">
+
+            <a href="/staff-students" class="card">
+                <div class="icon"><i class="bi bi-people-fill"></i></div>
+                <h3>View Students</h3>
+                <p>View students enrolled in your assigned courses and departments.</p>
+            </a>
+
+            <a href="/staff-timetable" class="card">
+                <div class="icon"><i class="bi bi-calendar-week-fill"></i></div>
+                <h3>Class Timetable</h3>
+                <p>Check day order timetable, period hours, and classroom allocations.</p>
+            </a>
+
+            <a href="/staff-exam-timetable" class="card">
+                <div class="icon"><i class="bi bi-journal-text"></i></div>
+                <h3>Exam Timetable</h3>
+                <p>View upcoming semester examination schedules for BCA & MCA.</p>
+            </a>
+
+            <a href="/staff-attendance" class="card featured">
+                <div class="icon"><i class="bi bi-check2-square"></i></div>
+                <h3>Take Attendance</h3>
+                <p>Mark daily period attendance for assigned class students.</p>
+            </a>
+
+            <a href="/staff-view-attendance" class="card">
+                <div class="icon"><i class="bi bi-card-checklist"></i></div>
+                <h3>View Attendance Records</h3>
+                <p>Filter and inspect attendance history by BCA & MCA departments.</p>
+            </a>
+
+            <a href="/staff-circulars" class="card">
+                <div class="icon"><i class="bi bi-megaphone-fill"></i></div>
+                <h3>Official Circulars</h3>
+                <p>Read institutional notices, meeting announcements, and updates.</p>
+            </a>
+
+            <a href="/staff-notifications" class="card">
+                <div class="icon"><i class="bi bi-bell-fill"></i></div>
+                <h3>Notice Board</h3>
+                <p>Check important administrative alerts and notices.</p>
+            </a>
+
+            <a href="/staff-profile" class="card">
+                <div class="icon"><i class="bi bi-person-circle"></i></div>
+                <h3>My Faculty Profile</h3>
+                <p>Review staff designation, department, and contact details.</p>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

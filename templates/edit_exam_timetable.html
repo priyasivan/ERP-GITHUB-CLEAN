@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Exam Time Table</title>
+
+<style>
+body{font-family:Arial;background:#f4f4f4;}
+.container{
+width:500px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px lightgray;
+}
+select,input{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+button{
+width:100%;
+padding:12px;
+background:#b30000;
+color:white;
+border:none;
+border-radius:5px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Edit Exam Time Table</h2>
+
+<form method="POST">
+
+<label>Exam Date</label>
+<input type="date" name="exam_date"
+value="{{ exam.exam_date }}" required>
+
+<label>Session</label>
+
+<select name="session">
+
+<option {% if exam.session=='FN' %}selected{% endif %}>FN</option>
+
+<option {% if exam.session=='AN' %}selected{% endif %}>AN</option>
+
+</select>
+
+<label>Hall</label>
+
+<input
+type="text"
+name="hall"
+value="{{ exam.hall }}"
+required>
+
+<button type="submit">
+Update
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

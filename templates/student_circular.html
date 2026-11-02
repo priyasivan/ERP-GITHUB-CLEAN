@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Circulars - St. Xavier's College</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --erp-red: #b30000;
+            --erp-red-dark: #8a0000;
+        }
+
+        body {
+            background: #f4f6f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #2b2f38;
+            margin: 0;
+        }
+
+        .topbar {
+            background: linear-gradient(90deg, var(--erp-red), #e53935);
+            color: #fff;
+            padding: 14px 24px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .college-name {
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        .app-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: 0.4px;
+        }
+
+        .back-btn {
+            background: white;
+            color: var(--erp-red);
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #ffebee;
+            color: var(--erp-red-dark);
+            transform: translateY(-1px);
+        }
+
+        .content-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 28px 20px;
+        }
+
+        .circular-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px 26px;
+            margin-bottom: 18px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 5px solid var(--erp-red);
+            transition: transform 0.2s;
+        }
+
+        .circular-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .circular-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .circular-title {
+            color: #1e293b;
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .circular-date {
+            color: #64748b;
+            font-size: 12.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .circular-body {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <div>
+        <div class="college-name">ST. XAVIER'S COLLEGE (AUTONOMOUS), PALAYAMKOTTAI</div>
+        <div class="app-title">Official Circulars & Notices</div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="/student-dashboard" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+</header>
+
+<div class="content-container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1"><i class="bi bi-megaphone-fill text-danger me-2"></i>Institutional Circulars</h3>
+            <p class="text-muted mb-0" style="font-size: 13.5px;">All official announcements issued by the College Administration</p>
+        </div>
+    </div>
+
+    {% if circulars %}
+        {% for row in circulars %}
+        <div class="circular-card">
+            <div class="circular-header">
+                <div class="circular-title">
+                    <i class="bi bi-pin-angle-fill text-danger"></i>
+                    {{ row.title }}
+                </div>
+                <div class="circular-date">
+                    <i class="bi bi-calendar3"></i> Published: {{ row.circular_date }}
+                </div>
+            </div>
+            <p class="circular-body">{{ row.description }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="card p-5 text-center text-muted border-0 shadow-sm">
+            <i class="bi bi-inbox fs-1 mb-2"></i>
+            <h5>No Circulars Published</h5>
+            <p style="font-size: 13px;">There are no circulars at this time.</p>
+        </div>
+    {% endif %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

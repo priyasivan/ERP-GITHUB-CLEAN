@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Timetable - St. Xavier's College</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fb;
+            color: #2b2f38;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #c91525 0%, #960f1b 100%);
+            color: white;
+            padding: 22px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(201, 21, 37, 0.25);
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            background: white;
+            color: #c91525;
+            text-decoration: none;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .back-btn:hover {
+            background: #fdf0f1;
+            transform: translateY(-1px);
+        }
+
+        .content {
+            padding: 30px 35px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-left: 6px solid #c91525;
+        }
+
+        .info-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-date {
+            font-size: 13px;
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-day-order {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1a1d20;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-today {
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #c8e6c9;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .info-student {
+            font-size: 14px;
+            color: #495057;
+            background: #f8f9fa;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        /* Day Order Tabs */
+        .day-selector-wrap {
+            margin-bottom: 20px;
+        }
+
+        .day-selector-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #6c757d;
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .day-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .day-tab {
+            background: white;
+            color: #495057;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .day-tab:hover {
+            border-color: #c91525;
+            color: #c91525;
+            background: #fffafa;
+        }
+
+        .day-tab.active {
+            background: #c91525;
+            color: white;
+            border-color: #c91525;
+            box-shadow: 0 4px 12px rgba(201, 21, 37, 0.3);
+        }
+
+        .day-tab.active .tab-badge-today {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+
+        .tab-badge-today {
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        /* Main Table Box */
+        .box {
+            background: white;
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e9f2;
+            overflow: hidden;
+        }
+
+        .box-header {
+            padding: 18px 24px;
+            background: #fafbfc;
+            border-bottom: 1px solid #edf1f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .box-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2b2f38;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th {
+            background: #c91525;
+            color: white;
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #edf1f7;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fff9f9;
+        }
+
+        .period-badge {
+            background: #f1f3f5;
+            color: #343a40;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            font-size: 13px;
+        }
+
+        .time-badge {
+            color: #495057;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sub-code {
+            font-weight: 700;
+            color: #c91525;
+            letter-spacing: 0.3px;
+        }
+
+        .sub-name {
+            font-weight: 600;
+            color: #1a1d20;
+        }
+
+        .staff-name {
+            color: #495057;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-present {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-absent {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-pending {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .status-scheduled {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #adb5bd;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .empty-state h4 {
+            color: #343a40;
+            margin: 0 0 8px;
+            font-size: 18px;
+        }
+
+        .empty-state p {
+            margin: 0 0 16px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+            .content {
+                padding: 20px 15px;
+            }
+            .info-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <h2><i class="bi bi-calendar3"></i> My Timetable</h2>
+        <p>View your class schedule for today's day order and full week</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="/student-attendance" class="back-btn">
+            <i class="bi bi-pie-chart-fill"></i> My Attendance
+        </a>
+        <a href="/student-dashboard" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="content">
+
+    <!-- Day Order & Status Banner -->
+    <div class="info-card">
+        <div class="info-left">
+            <span class="info-date"><i class="bi bi-calendar-event"></i> {{ today_str }}</span>
+            <div class="info-day-order">
+                <span>Today's Day Order: <strong>Day Order {{ today_day_order }}</strong></span>
+                <span class="badge-today"><i class="bi bi-check-circle-fill"></i> Active Today</span>
+            </div>
+        </div>
+        <div class="info-student">
+            <i class="bi bi-mortarboard-fill text-danger me-1"></i>
+            <strong>{{ student.course_code or student.department }}</strong> &bull; Semester {{ student.semester or 3 }} (Section {{ student.section or 'A' }})
+        </div>
+    </div>
+
+    <!-- Day Order Tabs Navigation -->
+    <div class="day-selector-wrap">
+        <span class="day-selector-label"><i class="bi bi-funnel"></i> Select Day Order to View Schedule:</span>
+        <div class="day-tabs">
+            {% for do in [1, 2, 3, 4, 5] %}
+                <a href="/student-timetable?day_order={{ do }}" 
+                   class="day-tab {% if active_day_order == do %}active{% endif %}">
+                    <span>Day Order {{ do }}</span>
+                    {% if today_day_order == do %}
+                        <span class="tab-badge-today">Today</span>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Timetable Box -->
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">
+                <i class="bi bi-clock-history text-danger"></i>
+                Class Schedule for <strong>Day Order {{ active_day_order }}</strong>
+                {% if active_day_order == today_day_order %}
+                    <span class="badge-today" style="margin-left: 8px;">Today's Schedule</span>
+                {% else %}
+                    <span style="font-size: 12px; color: #6c757d; font-weight: normal; margin-left: 6px;">(Viewing schedule)</span>
+                {% endif %}
+            </h3>
+
+            {% if active_day_order != today_day_order %}
+                <a href="/student-timetable" class="back-btn" style="padding: 5px 12px; font-size: 12px;">
+                    <i class="bi bi-arrow-repeat"></i> Go to Today (Day {{ today_day_order }})
+                </a>
+            {% endif %}
+        </div>
+
+        {% if timetable %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Period</th>
+                        <th style="width: 190px;">Time</th>
+                        <th style="width: 140px;">Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Faculty / Staff</th>
+                        <th style="width: 140px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in timetable %}
+                    <tr>
+                        <td>
+                            <span class="period-badge">Period {{ row.period_no }}</span>
+                        </td>
+
+                        <td>
+                            <span class="time-badge">
+                                <i class="bi bi-clock"></i>
+                                {{ row.start_time_fmt }} - {{ row.end_time_fmt }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="sub-code">{{ row.subject_code }}</span>
+                        </td>
+
+                        <td>
+                            <span class="sub-name">{{ row.subject_name }}</span>
+                        </td>
+
+                        <td>
+                            <span class="staff-name">
+                                <i class="bi bi-person-fill text-muted me-1"></i>
+                                {{ row.staff_name or 'Faculty Assigned' }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if active_day_order == today_day_order %}
+                                {% if row.attendance_status == 'Present' %}
+                                    <span class="status-badge status-present">
+                                        <i class="bi bi-check-circle-fill"></i> Present
+                                    </span>
+                                {% elif row.attendance_status == 'Absent' %}
+                                    <span class="status-badge status-absent">
+                                        <i class="bi bi-x-circle-fill"></i> Absent
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge status-pending">
+                                        <i class="bi bi-hourglass-split"></i> Pending
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="status-badge status-scheduled">
+                                    <i class="bi bi-calendar2-check"></i> Scheduled
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-calendar-x"></i>
+            <h4>No Timetable Scheduled</h4>
+            <p>There are no classes scheduled for Day Order {{ active_day_order }} for your course/section.</p>
+            <a href="/student-timetable" class="back-btn">
+                <i class="bi bi-calendar-check"></i> View Today's Schedule (Day Order {{ today_day_order }})
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

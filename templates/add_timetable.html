@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Time Table</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f4f4;
+}
+
+.container{
+width:500px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px lightgray;
+}
+
+h2{
+text-align:center;
+color:#b30000;
+}
+
+select,input{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#b30000;
+color:white;
+border:none;
+font-size:16px;
+border-radius:5px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Add Time Table</h2>
+
+<form method="POST">
+
+<label>Department</label>
+<select name="dept_code">
+{% for d in departments %}
+<option value="{{ d.dept_code }}">{{ d.dept_name }}</option>
+{% endfor %}
+</select>
+
+<label>Course</label>
+<select name="course_code">
+{% for c in courses %}
+<option value="{{ c.course_code }}">{{ c.course_name }}</option>
+{% endfor %}
+</select>
+
+<label>Semester</label>
+<input type="number" name="semester" required>
+
+<label>Section</label>
+<input type="text" name="section" required>
+
+<label>Subject</label>
+<select name="subject_code">
+{% for sub in subjects %}
+<option value="{{ sub.subject_code }}">{{ sub.subject_name }}</option>
+{% endfor %}
+</select>
+
+<label>Staff</label>
+<select name="staff_id">
+{% for s in staffs %}
+<option value="{{ s.staff_id }}">{{ s.staff_name }}</option>
+{% endfor %}
+</select>
+
+<label>Day Order</label>
+<select name="day_order" required>
+<option value="1">Day Order 1</option>
+<option value="2">Day Order 2</option>
+<option value="3">Day Order 3</option>
+<option value="4">Day Order 4</option>
+<option value="5">Day Order 5</option>
+<option value="6">Day Order 6</option>
+</select>
+
+<label>Period Number</label>
+<input type="number" name="period_no" min="1" max="10" placeholder="e.g. 1" required>
+
+<label>Start Time</label>
+<input type="time" name="start_time" value="09:00" required>
+
+<label>End Time</label>
+<input type="time" name="end_time" value="09:50" required>
+
+<button type="submit">Save Time Table Period</button>
+<br><br>
+<a href="/timetable" style="display:block; text-align:center; color:#555; text-decoration:none;">← Back to Timetable</a>
+
+</form>
+
+</div>
+
+</body>
+</html>

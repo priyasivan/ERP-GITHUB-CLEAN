@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Attendance - Staff Portal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+            color: #222;
+        }
+
+        .header {
+            height: 70px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo {
+            color: #c91525;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .portal {
+            color: #777;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .staff {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #c91525;
+            font-weight: bold;
+        }
+
+        .profile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #c91525;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #c91525;
+            padding-top: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active {
+            background: white;
+            color: #c91525;
+            border-radius: 0 8px 8px 0;
+            font-weight: bold;
+        }
+
+        .sidebar .logout {
+            margin-top: auto;
+            margin-bottom: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 20px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 35px;
+            max-width: 1200px;
+        }
+
+        .title {
+            margin-bottom: 25px;
+        }
+
+        .title h2 {
+            margin: 0;
+            color: #c91525;
+            font-size: 28px;
+        }
+
+        .title p {
+            color: #777;
+            margin-top: 7px;
+        }
+
+        .filter-box,
+        .student-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #e1e1e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: 1.2fr 2fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        select,
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus {
+            border-color: #c91525;
+        }
+
+        .student-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .student-title {
+            color: #c91525;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .student-count-badge {
+            background: #fdf0f1;
+            color: #c91525;
+            font-size: 13px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .batch-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-toggle {
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .btn-toggle-present {
+            color: #2e7d32;
+            border-color: #a5d6a7;
+        }
+
+        .btn-toggle-present:hover {
+            background: #e8f5e9;
+        }
+
+        .btn-toggle-absent {
+            color: #c62828;
+            border-color: #ef9a9a;
+        }
+
+        .btn-toggle-absent:hover {
+            background: #ffebee;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .student-table th {
+            background: #c91525;
+            color: white;
+            padding: 13px 16px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .student-table td {
+            padding: 13px 16px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .student-table tr:hover {
+            background: #fff7f7;
+        }
+
+        .status-select {
+            width: 140px;
+            padding: 8px 12px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .status-select.present {
+            color: #2e7d32;
+            border-color: #a5d6a7;
+            background-color: #f1f8e9;
+        }
+
+        .status-select.absent {
+            color: #c62828;
+            border-color: #ef9a9a;
+            background-color: #ffebee;
+        }
+
+        .class-badge {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .save-btn {
+            margin-top: 22px;
+            background: #c91525;
+            color: white;
+            border: none;
+            padding: 13px 30px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .save-btn:hover {
+            background: #a90f1d;
+        }
+
+        .empty-class-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .filters {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <div class="logo">ERP System</div>
+        <div class="portal">Staff Portal &bull; St. Xavier's College</div>
+    </div>
+
+    <div class="staff">
+        <div class="profile-icon">👤</div>
+        {{ session.get("staff_name", "Staff") }}
+    </div>
+</div>
+
+<div class="layout">
+
+    <div class="sidebar">
+        <a href="/staff-dashboard">🏠 Dashboard</a>
+        <a href="/staff-students">👨‍🎓 View Students</a>
+        <a href="/staff-timetable">📅 Timetable</a>
+        <a href="/staff-exam-timetable">📝 Exam Timetable</a>
+        <a href="/staff-attendance" class="active">✅ Take Attendance</a>
+        <a href="/staff-view-attendance">📊 View Attendance</a>
+        <a href="/staff-circulars">📢 Circulars</a>
+        <a href="/staff-notifications">🔔 Notifications</a>
+        <a href="/staff-profile">👤 Profile</a>
+        <a href="/staff-logout" class="logout">🚪 Logout</a>
+    </div>
+
+    <div class="content">
+
+        <div class="title">
+            <h2>Take Attendance</h2>
+            <p>Select class, subject, date, and period to mark student attendance</p>
+        </div>
+
+        <form method="POST" action="/save-attendance" id="attendanceForm">
+
+            <div class="filter-box">
+
+                <div class="filters">
+
+                    <!-- Select Class Dropdown -->
+                    <div>
+                        <label for="classSelect"><i class="bi bi-mortarboard-fill text-danger"></i> Select Class</label>
+                        <select name="class_code" id="classSelect" onchange="onClassChange(this.value)" required>
+                            <option value="">-- Choose Class --</option>
+                            {% for c in classes %}
+                            <option value="{{ c }}" {% if c == selected_class %}selected{% endif %}>
+                                {{ c }} ({{ 'Bachelor of Computer Applications' if c == 'BCA' else 'Master of Computer Applications' }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Subject Dropdown (Corresponds to Selected Class) -->
+                    <div>
+                        <label for="subjectSelect"><i class="bi bi-book-fill text-danger"></i> Subject</label>
+                        <select name="subject_code" id="subjectSelect" required>
+                            <option value="">-- Select Subject --</option>
+                            {% for subject in subjects %}
+                            <option value="{{ subject.subject_code }}" data-class="{{ subject.class_code }}">
+                                {{ subject.subject_code }} - {{ subject.subject_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Date -->
+                    <div>
+                        <label for="attendanceDate"><i class="bi bi-calendar-event text-danger"></i> Date</label>
+                        <input type="date"
+                               id="attendanceDate"
+                               name="attendance_date"
+                               value="{{ today_str }}"
+                               required>
+                    </div>
+
+                    <!-- Period -->
+                    <div>
+                        <label for="periodNo"><i class="bi bi-clock-fill text-danger"></i> Period</label>
+                        <select name="period_no" id="periodNo" required>
+                            <option value="1">Period 1</option>
+                            <option value="2">Period 2</option>
+                            <option value="3">Period 3</option>
+                            <option value="4">Period 4</option>
+                            <option value="5">Period 5</option>
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="student-box">
+
+                <div class="student-header">
+                    <div class="student-title">
+                        <span>Students List</span>
+                        <span class="student-count-badge" id="studentCountBadge">0 Students</span>
+                    </div>
+
+                    <div class="batch-actions">
+                        <button type="button" class="btn-toggle btn-toggle-present" onclick="setAllStatus('Present')">
+                            ✓ Mark All Present
+                        </button>
+                        <button type="button" class="btn-toggle btn-toggle-absent" onclick="setAllStatus('Absent')">
+                            ✗ Mark All Absent
+                        </button>
+                    </div>
+                </div>
+
+                <table class="student-table" id="studentTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">#</th>
+                            <th style="width: 160px;">Register No.</th>
+                            <th>Student Name</th>
+                            <th style="width: 120px;">Class</th>
+                            <th style="width: 160px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr class="student-row" data-class="{{ student.class_code }}">
+                            <td class="row-index"></td>
+                            <td>
+                                <b>{{ student.reg_no }}</b>
+                            </td>
+                            <td>
+                                {{ student.student_name }}
+                            </td>
+                            <td>
+                                <span class="class-badge">{{ student.class_code }}</span>
+                            </td>
+                            <td>
+                                <input type="hidden"
+                                       class="student-id-input"
+                                       name="student_id"
+                                       value="{{ student.student_id }}">
+
+                                <select class="status-select present" 
+                                        name="status_{{ student.student_id }}"
+                                        onchange="updateSelectStyle(this)">
+                                    <option value="Present" selected>Present</option>
+                                    <option value="Absent">Absent</option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="empty-class-state" id="emptyClassState">
+                    <p style="font-size: 16px; margin: 0;">No students found for the selected class.</p>
+                </div>
+
+                <button type="submit" class="save-btn">
+                    <i class="bi bi-save-fill"></i> Save Attendance
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+    function updateSelectStyle(selectEl) {
+        if (selectEl.value === 'Present') {
+            selectEl.className = 'status-select present';
+        } else {
+            selectEl.className = 'status-select absent';
+        }
+    }
+
+    function onClassChange(selectedClass) {
+        // 1. Filter Subject Dropdown
+        const subjectSelect = document.getElementById('subjectSelect');
+        const subjectOptions = subjectSelect.querySelectorAll('option');
+        let currentSubjectValid = false;
+
+        subjectOptions.forEach(opt => {
+            if (!opt.value) return; // Header option
+            const optClass = opt.getAttribute('data-class');
+            if (!selectedClass || optClass === selectedClass) {
+                opt.style.display = '';
+                if (opt.selected) currentSubjectValid = true;
+            } else {
+                opt.style.display = 'none';
+                if (opt.selected) opt.selected = false;
+            }
+        });
+
+        if (!currentSubjectValid) {
+            // Select first visible option if available
+            let firstVisible = null;
+            subjectOptions.forEach(opt => {
+                if (opt.value && (!selectedClass || opt.getAttribute('data-class') === selectedClass)) {
+                    if (!firstVisible) firstVisible = opt;
+                }
+            });
+            if (firstVisible) {
+                firstVisible.selected = true;
+            } else {
+                subjectSelect.value = '';
+            }
+        }
+
+        // 2. Filter Student Table Rows
+        const rows = document.querySelectorAll('.student-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rowClass = row.getAttribute('data-class');
+            const idInput = row.querySelector('.student-id-input');
+            const statusSelect = row.querySelector('.status-select');
+
+            if (!selectedClass || rowClass === selectedClass) {
+                row.style.display = '';
+                visibleCount++;
+                row.querySelector('.row-index').textContent = visibleCount;
+                if (idInput) idInput.disabled = false;
+                if (statusSelect) statusSelect.disabled = false;
+            } else {
+                row.style.display = 'none';
+                if (idInput) idInput.disabled = true;
+                if (statusSelect) statusSelect.disabled = true;
+            }
+        });
+
+        // 3. Update count & empty state
+        document.getElementById('studentCountBadge').textContent = `${visibleCount} ${selectedClass || ''} Students`;
+        const emptyState = document.getElementById('emptyClassState');
+        const table = document.getElementById('studentTable');
+
+        if (visibleCount === 0) {
+            emptyState.style.display = 'block';
+            table.style.display = 'none';
+        } else {
+            emptyState.style.display = 'none';
+            table.style.display = 'table';
+        }
+    }
+
+    function setAllStatus(status) {
+        const rows = document.querySelectorAll('.student-row');
+        rows.forEach(row => {
+            if (row.style.display !== 'none') {
+                const select = row.querySelector('.status-select');
+                if (select) {
+                    select.value = status;
+                    updateSelectStyle(select);
+                }
+            }
+        });
+    }
+
+    // Initialize on page load with pre-selected class
+    window.addEventListener('DOMContentLoaded', () => {
+        const classSelect = document.getElementById('classSelect');
+        onClassChange(classSelect.value || 'BCA');
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Staff Mapping</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f4f4;
+}
+
+.container{
+width:500px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px lightgray;
+}
+
+h2{
+color:#b30000;
+text-align:center;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#b30000;
+color:white;
+border:none;
+font-size:16px;
+border-radius:5px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<div class="mb-3">
+    <a href="/dashboard" class="btn btn-outline-danger">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+<h2>Add Staff Class Mapping</h2>
+
+<form method="POST">
+
+<label>Staff</label>
+<select name="staff_id">
+{% for s in staffs %}
+<option value="{{ s.staff_id }}">{{ s.staff_id }}</option>
+{% endfor %}
+</select>
+
+<label>Department</label>
+<select name="dept_code">
+{% for d in departments %}
+<option value="{{ d.dept_code }}">{{ d.dept_code }}</option>
+{% endfor %}
+</select>
+
+<label>Course</label>
+<select name="course_code">
+{% for c in courses %}
+<option value="{{ c.course_code }}">{{ c.course_code }}</option>
+{% endfor %}
+</select>
+
+<label>Subject</label>
+<select name="subject_code">
+{% for sub in subjects %}
+<option value="{{ sub.subject_code }}">{{ sub.subject_code }}</option>
+{% endfor %}
+</select>
+
+<label>Semester</label>
+<input type="number" name="semester" required>
+
+<label>Section</label>
+<input type="text" name="section" required>
+
+<button type="submit">Save Mapping</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

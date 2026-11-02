@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Day Order Calendar Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; }
+        .header-box { background: #b30000; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        .card-custom { border: none; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: white; padding: 20px; margin-bottom: 20px; }
+    </style>
+</head>
+<body class="p-4">
+<div class="container" style="max-width: 900px;">
+    <div class="header-box d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="mb-1"><i class="bi bi-calendar-week"></i> Day Order Calendar</h3>
+            <p class="mb-0 small">Manage College Day Order schedule and dates</p>
+        </div>
+        <div>
+            <a href="/timetable" class="btn btn-light btn-sm text-dark me-2">Time Table</a>
+            <a href="/dashboard" class="btn btn-outline-light btn-sm">← Dashboard</a>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class="card-custom">
+        <h5 class="text-danger fw-bold"><i class="bi bi-clock-history"></i> Today's Day Order</h5>
+        <p class="text-muted small">Quickly switch or confirm today's active day order:</p>
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <span class="badge bg-danger fs-6 p-2">Currently: Day Order {{ today_day_order }}</span>
+        </div>
+        <form action="/set-today-day-order" method="POST" class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-semibold small">Set Today To:</span>
+            {% for d in [1, 2, 3, 4, 5, 6] %}
+                <button type="submit" name="day_order" value="{{ d }}" class="btn {% if today_day_order == d %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm">Day Order {{ d }}</button>
+            {% endfor %}
+        </form>
+    </div>
+    <div class="card-custom">
+        <h5 class="text-dark fw-bold"><i class="bi bi-calendar-plus"></i> Set Day Order for a Specific Date</h5>
+        <form method="POST" class="row g-3 mt-1">
+            <div class="col-md-5">
+                <label class="form-label small fw-bold">Date</label>
+                <input type="date" name="timetable_date" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">Day Order</label>
+                <select name="day_order" class="form-select" required>
+                    <option value="1">Day Order 1</option>
+                    <option value="2">Day Order 2</option>
+                    <option value="3">Day Order 3</option>
+                    <option value="4">Day Order 4</option>
+                    <option value="5">Day Order 5</option>
+                    <option value="6">Day Order 6</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-danger w-100">Save Date</button>
+            </div>
+        </form>
+    </div>
+    <div class="card-custom">
+        <h5 class="text-dark fw-bold mb-3"><i class="bi bi-table"></i> Recent Day Order Calendar Records</h5>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle mb-0">
+                <thead class="table-light">
+                    <tr><th>Date</th><th>Day Order</th></tr>
+                </thead>
+                <tbody>
+                    {% for row in calendar_entries %}
+                    <tr>
+                        <td class="fw-bold">{{ row.timetable_date }}</td>
+                        <td><span class="badge bg-secondary">Day Order {{ row.day_order }}</span></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="2" class="text-center text-muted p-3">No calendar records found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

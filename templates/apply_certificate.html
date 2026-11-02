@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Certificate</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body{
+            background:#f5f5f5;
+            font-family:'Segoe UI',sans-serif;
+        }
+
+        .topbar{
+            background:#b30000;
+            color:white;
+            padding:15px;
+            font-weight:bold;
+            font-size:22px;
+            text-align:center;
+        }
+
+        .card{
+            border:none;
+            border-radius:15px;
+            box-shadow:0px 5px 15px rgba(0,0,0,.1);
+        }
+
+        .btn-submit{
+            background:#b30000;
+            color:white;
+            font-weight:bold;
+        }
+
+        .btn-submit:hover{
+            background:#8a0000;
+            color:white;
+        }
+
+        h4{
+            color:#b30000;
+            font-weight:bold;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+    ERP Management System
+</div>
+
+<div class="container mt-5">
+
+    <div class="card p-4">
+
+        <h4 class="mb-4">
+            <i class="bi bi-file-earmark-text-fill"></i>
+            Apply Certificate
+        </h4>
+
+        <form action="/submit-certificate" method="POST" enctype="multipart/form-data">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+    <label class="form-label">Register Number</label>
+    <input type="text"
+           class="form-control"
+           name="student_regno"
+           value="{{ student.reg_no }}"
+           readonly>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label class="form-label">Student Name</label>
+    <input type="text"
+           class="form-control"
+           name="student_name"
+           value="{{ student.student_name }}"
+           readonly>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label class="form-label">Department</label>
+    <input type="text"
+           class="form-control"
+           name="department"
+           value="{{ student.department }}"
+           readonly>
+</div>
+                <div class="col-md-6 mb-3">
+    <label class="form-label">Father's Name</label>
+    <input type="text"
+           class="form-control"
+           name="father_name"
+           placeholder="Enter Father's Name"
+           required>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label class="form-label">Mobile Number</label>
+    <input type="text"
+           class="form-control"
+           name="mobile_no"
+           placeholder="Enter Mobile Number"
+           required>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label class="form-label">Academic Year</label>
+    <input type="text"
+           class="form-control"
+           name="academic_year"
+           placeholder="2026-2027"
+           required>
+</div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Certificate Type</label>
+
+                    <select class="form-select" name="certificate_type" required>
+
+    <option value="">Select Certificate</option>
+    <option>Bonafide Certificate</option>
+    <option>Fee Structure Certificate</option>
+    <option>Medium of Instruction Certificate</option>
+
+</select>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span class="badge bg-danger mb-1">Fee Required</span>
+                                <h5 class="mb-0 fw-bold">Certificate Processing Fee: <span class="text-danger">₹50.00</span></h5>
+                                <small class="text-muted">Payable to St. Xavier's College Examination / Certificate Section</small>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary btn-lg shadow-sm" id="payOnlineBtn" onclick="openPaymentModal()">
+                                    <i class="bi bi-credit-card-2-front-fill me-1"></i> Pay ₹50 Online
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="paymentSuccessBanner" class="alert alert-success d-none mb-2 mt-3 py-2 align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill fs-5"></i>
+                            <div>
+                                <b>Online Payment Verified!</b> Transaction ID: <code id="displayTxnId" class="fw-bold fs-6"></code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Payment Status</label>
+                    <select class="form-select bg-light" name="payment_status" id="paymentStatusSelect" readonly>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending (Pay at Office)</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Transaction / UTR Reference ID</label>
+                    <input type="text"
+                           class="form-control"
+                           id="transactionIdInput"
+                           name="transaction_id"
+                           placeholder="e.g. TXN202609..."
+                           required>
+                    <small class="text-muted">Generated automatically when you pay online, or enter UPI UTR ID.</small>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label class="form-label">Upload Payment Screenshot (Optional)</label>
+                    <input type="file"
+                           class="form-control"
+                           name="payment_proof">
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label class="form-label fw-bold">Purpose of Certificate</label>
+                    <textarea
+                        class="form-control"
+                        name="purpose"
+                        rows="3"
+                        placeholder="State the reason (e.g., Higher Education, Educational Loan, Passport Verification, Bus Pass)..."
+                        required></textarea>
+                </div>
+
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success px-5 py-2 fw-bold">
+                    <i class="bi bi-send-check-fill me-1"></i> Submit Certificate Request
+                </button>
+                <a href="/student-dashboard" class="btn btn-secondary ms-2 py-2">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- Online Payment Gateway Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 18px; overflow: hidden;">
+            <div class="modal-header text-white" style="background: linear-gradient(135deg, #b30000, #d32f2f);">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-lock-fill fs-4"></i>
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0">SXC Secure Payment Gateway</h5>
+                        <small style="opacity: 0.9;">St. Xavier's College &bull; Digital Fee Portal</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <div class="text-center p-3 mb-3 rounded-3" style="background: #fdf2f2; border: 1px dashed #fca5a5;">
+                    <div class="text-muted small">Total Amount Payable</div>
+                    <div class="display-6 fw-bold text-danger">₹50.00</div>
+                    <div class="badge bg-secondary mt-1">Certificate Processing Fee</div>
+                </div>
+
+                <!-- Payment Options Nav -->
+                <ul class="nav nav-pills nav-fill mb-3" id="paymentTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active fw-bold btn-sm" id="upi-tab" data-bs-toggle="pill" data-bs-target="#upi-pane" type="button">
+                            <i class="bi bi-qr-code-scan"></i> UPI / QR
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold btn-sm" id="card-tab" data-bs-toggle="pill" data-bs-target="#card-pane" type="button">
+                            <i class="bi bi-credit-card"></i> Card
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold btn-sm" id="netbank-tab" data-bs-toggle="pill" data-bs-target="#netbank-pane" type="button">
+                            <i class="bi bi-bank"></i> NetBanking
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <!-- UPI Tab -->
+                    <div class="tab-pane fade show active text-center" id="upi-pane">
+                        <p class="text-muted small mb-2">Scan QR Code using Google Pay, PhonePe, or Paytm</p>
+                        <!-- Simulated QR Code SVG -->
+                        <div class="d-inline-block p-2 bg-white border rounded-3 shadow-sm mb-2">
+                            <svg width="150" height="150" viewBox="0 0 100 100" style="background: white;">
+                                <!-- QR Mock Pattern -->
+                                <rect width="100" height="100" fill="#fff"/>
+                                <rect x="5" y="5" width="30" height="30" fill="#111"/>
+                                <rect x="9" y="9" width="22" height="22" fill="#fff"/>
+                                <rect x="13" y="13" width="14" height="14" fill="#111"/>
+
+                                <rect x="65" y="5" width="30" height="30" fill="#111"/>
+                                <rect x="69" y="9" width="22" height="22" fill="#fff"/>
+                                <rect x="73" y="13" width="14" height="14" fill="#111"/>
+
+                                <rect x="5" y="65" width="30" height="30" fill="#111"/>
+                                <rect x="9" y="69" width="22" height="22" fill="#fff"/>
+                                <rect x="13" y="73" width="14" height="14" fill="#111"/>
+
+                                <rect x="42" y="12" width="10" height="10" fill="#111"/>
+                                <rect x="42" y="32" width="16" height="8" fill="#111"/>
+                                <rect x="12" y="42" width="18" height="12" fill="#111"/>
+                                <rect x="45" y="50" width="15" height="15" fill="#b30000"/>
+                                <rect x="65" y="45" width="25" height="10" fill="#111"/>
+                                <rect x="45" y="75" width="20" height="18" fill="#111"/>
+                                <rect x="75" y="65" width="15" height="25" fill="#111"/>
+                            </svg>
+                        </div>
+                        <div class="small fw-bold text-dark mb-2">UPI ID: <span class="text-danger">sxcpalayamkottai@upi</span></div>
+                        <div class="text-muted" style="font-size: 11px;">Payee: St. Xavier's College Autonomous</div>
+                    </div>
+
+                    <!-- Card Tab -->
+                    <div class="tab-pane fade" id="card-pane">
+                        <div class="mb-2">
+                            <label class="form-label small fw-bold mb-1">Card Number</label>
+                            <input type="text" class="form-control form-control-sm" placeholder="4111 2222 3333 4444" value="4532 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 8921">
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold mb-1">Expiry</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="MM/YY" value="12/28">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold mb-1">CVV</label>
+                                <input type="password" class="form-control form-control-sm" placeholder="123" value="789">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Net Banking Tab -->
+                    <div class="tab-pane fade" id="netbank-pane">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold mb-1">Select Bank</label>
+                            <select class="form-select form-select-sm">
+                                <option>State Bank of India</option>
+                                <option>HDFC Bank</option>
+                                <option>ICICI Bank</option>
+                                <option>Canara Bank</option>
+                                <option>Indian Overseas Bank</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processing state -->
+                <div id="paymentProcessing" class="text-center py-3 d-none">
+                    <div class="spinner-border text-danger mb-2" role="status"></div>
+                    <div class="fw-bold text-dark">Connecting to Bank & Verifying Payment...</div>
+                    <small class="text-muted">Please do not close or refresh this window</small>
+                </div>
+
+                <!-- Success state -->
+                <div id="paymentSuccessMsg" class="text-center py-2 d-none">
+                    <div class="text-success fs-1 mb-1">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h5 class="fw-bold text-success mb-1">Payment Successful!</h5>
+                    <p class="text-muted small mb-0">Transaction ID recorded: <b id="modalTxnId"></b></p>
+                </div>
+            </div>
+
+            <div class="modal-footer bg-light" id="modalFooter">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success fw-bold px-4" id="confirmPayBtn" onclick="processMockPayment()">
+                    <i class="bi bi-check2-circle me-1"></i> Confirm & Pay ₹50
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let paymentModalInstance;
+
+document.addEventListener("DOMContentLoaded", function() {
+    paymentModalInstance = new bootstrap.Modal(document.getElementById('paymentModal'));
+    
+    // If transaction ID is empty, generate a pre-draft ID or wait for user to click pay
+    const currentTxn = document.getElementById('transactionIdInput').value;
+    if (!currentTxn) {
+        // Leave placeholder ready
+    }
+});
+
+function openPaymentModal() {
+    // Reset modal state
+    document.getElementById('paymentProcessing').classList.add('d-none');
+    document.getElementById('paymentSuccessMsg').classList.add('d-none');
+    document.getElementById('modalFooter').classList.remove('d-none');
+    paymentModalInstance.show();
+}
+
+function processMockPayment() {
+    const procDiv = document.getElementById('paymentProcessing');
+    const succDiv = document.getElementById('paymentSuccessMsg');
+    const footerDiv = document.getElementById('modalFooter');
+    const tabs = document.querySelector('.tab-content');
+
+    tabs.classList.add('d-none');
+    procDiv.classList.remove('d-none');
+    footerDiv.classList.add('d-none');
+
+    // Simulate 1.2s gateway verification
+    setTimeout(() => {
+        procDiv.classList.add('d-none');
+        succDiv.classList.remove('d-none');
+
+        // Generate unique 12-digit transaction ID
+        const randNum = Math.floor(1000000000 + Math.random() * 9000000000);
+        const txnId = "TXN" + randNum;
+
+        document.getElementById('modalTxnId').innerText = txnId;
+
+        // Populate parent form
+        document.getElementById('transactionIdInput').value = txnId;
+        document.getElementById('paymentStatusSelect').value = "Paid";
+        
+        // Show success banner on parent form
+        const banner = document.getElementById('paymentSuccessBanner');
+        banner.classList.remove('d-none');
+        banner.classList.add('d-flex');
+        document.getElementById('displayTxnId').innerText = txnId;
+
+        // Change Pay Online button style
+        const payBtn = document.getElementById('payOnlineBtn');
+        payBtn.className = "btn btn-success btn-lg shadow-sm";
+        payBtn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Paid ₹50';
+
+        setTimeout(() => {
+            paymentModalInstance.hide();
+        }, 1300);
+    }, 1100);
+}
+</script>
+</body>
+</html>

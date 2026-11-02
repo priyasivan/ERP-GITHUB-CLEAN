@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply Scholarship</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+
+body{
+    background:#f5f5f5;
+    font-family:'Segoe UI',sans-serif;
+}
+
+.topbar{
+    background:#b30000;
+    color:white;
+    text-align:center;
+    padding:15px;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.container-box{
+    max-width:750px;
+    margin:40px auto;
+}
+
+.card{
+    border:none;
+    border-radius:12px;
+    box-shadow:0px 5px 15px rgba(0,0,0,.1);
+}
+
+.card-header{
+    background:#b30000;
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+    text-align:center;
+}
+
+.btn-submit{
+    background:#b30000;
+    color:white;
+    font-weight:bold;
+}
+
+.btn-submit:hover{
+    background:#900000;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+ERP MANAGEMENT SYSTEM
+</div>
+
+<div class="container-box">
+
+<div class="card">
+
+<div class="card-header">
+Apply Scholarship
+</div>
+
+<div class="card-body">
+
+<form action="/submit-scholarship" method="POST" enctype="multipart/form-data">
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">Register Number</label>
+        <input type="text" name="student_regno" class="form-control bg-light" value="{{ student.reg_no if student else '' }}" readonly required>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">Student Name</label>
+        <input type="text" name="student_name" class="form-control bg-light" value="{{ student.student_name if student else '' }}" readonly required>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Department</label>
+    <input type="text" name="department" class="form-control bg-light" value="{{ student.department if student else '' }}" readonly required>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">Scholarship Type</label>
+        <select class="form-select" name="scholarship_type" required>
+            <option value="">-- Select Scholarship --</option>
+            <option>Merit Scholarship</option>
+            <option>BC Scholarship</option>
+            <option>First Graduate Scholarship</option>
+            <option>Minority Scholarship</option>
+            <option>Sports Scholarship</option>
+        </select>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">Amount</label>
+        <input type="number" name="amount" class="form-control" placeholder="Enter Amount (e.g. 15000)" required>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Reason / Purpose</label>
+    <textarea class="form-control" name="reason" rows="2" placeholder="Enter Reason for Scholarship Application" required></textarea>
+</div>
+
+<!-- ================= DIGITAL LOCKER CERTIFICATE ATTACHMENTS ================= -->
+<div class="p-3 mb-4 rounded-3 border" style="background:#fdf6f6; border-color:#e0b4b4 !important;">
+    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+        <h5 class="mb-0 fw-bold text-danger">
+            <i class="bi bi-shield-lock-fill me-1"></i> Attach Verification Documents
+        </h5>
+        <span class="badge bg-success">
+            <i class="bi bi-check-circle-fill me-1"></i> Digital Locker Enabled
+        </span>
+    </div>
+    <p class="text-muted small mb-3">
+        You can directly attach your <b>Community Certificate</b> and <b>Income Certificate</b> from your saved <b>Digital Locker</b> documents, or upload fresh copies from your device.
+    </p>
+
+    <!-- 1. Community Certificate -->
+    <div class="card p-3 mb-3 bg-white border">
+        <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-file-earmark-person-fill text-primary me-1"></i> Community Certificate:</span>
+            <small class="text-muted">Required for verification</small>
+        </label>
+        
+        <div class="d-flex gap-3 mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="community_cert_source" id="comm_src_locker" value="locker" checked onclick="toggleCommSource('locker')">
+                <label class="form-check-label fw-semibold" for="comm_src_locker">
+                    📂 Choose from Digital Locker
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="community_cert_source" id="comm_src_upload" value="upload" onclick="toggleCommSource('upload')">
+                <label class="form-check-label fw-semibold" for="comm_src_upload">
+                    📤 Upload from Device
+                </label>
+            </div>
+        </div>
+
+        <div id="comm_locker_box">
+            <select name="community_cert_locker" class="form-select">
+                {% if locker_documents %}
+                    <option value="">-- Select from your Digital Locker --</option>
+                    {% for doc in locker_documents %}
+                        <option value="{{ doc.file_name }}" {% if 'community' in doc.document_name|lower %}selected{% endif %}>
+                            🔒 {{ doc.document_name }} ({{ doc.file_name }})
+                        </option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">No documents in Locker yet</option>
+                {% endif %}
+            </select>
+            <small class="text-muted mt-1 d-block">
+                {% if locker_documents %}
+                    <i class="bi bi-info-circle"></i> We auto-detected documents from your Digital Locker.
+                {% else %}
+                    <i class="bi bi-exclamation-triangle"></i> No documents found in your Digital Locker. Please choose "Upload from Device" or upload to Digital Locker first.
+                {% endif %}
+            </small>
+        </div>
+
+        <div id="comm_upload_box" style="display:none;">
+            <input type="file" name="community_cert_upload" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
+            <small class="text-muted mt-1 d-block"><i class="bi bi-upload"></i> Uploaded file will also be automatically saved to your Digital Locker.</small>
+        </div>
+    </div>
+
+    <!-- 2. Income Certificate -->
+    <div class="card p-3 bg-white border">
+        <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-cash-stack text-success me-1"></i> Income Certificate:</span>
+            <small class="text-muted">Required for fee waiver</small>
+        </label>
+        
+        <div class="d-flex gap-3 mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="income_cert_source" id="income_src_locker" value="locker" checked onclick="toggleIncomeSource('locker')">
+                <label class="form-check-label fw-semibold" for="income_src_locker">
+                    📂 Choose from Digital Locker
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="income_cert_source" id="income_src_upload" value="upload" onclick="toggleIncomeSource('upload')">
+                <label class="form-check-label fw-semibold" for="income_src_upload">
+                    📤 Upload from Device
+                </label>
+            </div>
+        </div>
+
+        <div id="income_locker_box">
+            <select name="income_cert_locker" class="form-select">
+                {% if locker_documents %}
+                    <option value="">-- Select from your Digital Locker --</option>
+                    {% for doc in locker_documents %}
+                        <option value="{{ doc.file_name }}" {% if 'income' in doc.document_name|lower %}selected{% endif %}>
+                            🔒 {{ doc.document_name }} ({{ doc.file_name }})
+                        </option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">No documents in Locker yet</option>
+                {% endif %}
+            </select>
+            <small class="text-muted mt-1 d-block">
+                {% if locker_documents %}
+                    <i class="bi bi-info-circle"></i> We auto-detected documents from your Digital Locker.
+                {% else %}
+                    <i class="bi bi-exclamation-triangle"></i> No documents found in your Digital Locker. Please choose "Upload from Device".
+                {% endif %}
+            </small>
+        </div>
+
+        <div id="income_upload_box" style="display:none;">
+            <input type="file" name="income_cert_upload" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
+            <small class="text-muted mt-1 d-block"><i class="bi bi-upload"></i> Uploaded file will also be automatically saved to your Digital Locker.</small>
+        </div>
+    </div>
+</div>
+
+<div class="d-grid mt-4">
+    <button type="submit" class="btn btn-submit btn-lg shadow-sm">
+        <i class="bi bi-send-fill me-1"></i> Submit Scholarship Application
+    </button>
+</div>
+
+<div class="text-center mt-3">
+    <a href="/student-dashboard" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+</form>
+
+<script>
+function toggleCommSource(source) {
+    if (source === 'locker') {
+        document.getElementById('comm_locker_box').style.display = 'block';
+        document.getElementById('comm_upload_box').style.display = 'none';
+    } else {
+        document.getElementById('comm_locker_box').style.display = 'none';
+        document.getElementById('comm_upload_box').style.display = 'block';
+    }
+}
+
+function toggleIncomeSource(source) {
+    if (source === 'locker') {
+        document.getElementById('income_locker_box').style.display = 'block';
+        document.getElementById('income_upload_box').style.display = 'none';
+    } else {
+        document.getElementById('income_locker_box').style.display = 'none';
+        document.getElementById('income_upload_box').style.display = 'block';
+    }
+}
+</script>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

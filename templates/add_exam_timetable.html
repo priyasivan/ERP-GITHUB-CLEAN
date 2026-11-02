@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Exam Time Table</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f4f4;
+}
+
+.container{
+width:500px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px lightgray;
+}
+
+h2{
+text-align:center;
+color:#b30000;
+}
+
+select,input{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#b30000;
+color:white;
+border:none;
+border-radius:5px;
+font-size:16px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<a href="/department" class="btn btn-outline-secondary mb-3">
+    ← Back
+</a>
+<h2>Add Exam Time Table</h2>
+
+<form method="POST">
+
+<label>Department</label>
+<select name="dept_code">
+{% for d in departments %}
+<option value="{{ d.dept_code }}">{{ d.dept_name }}</option>
+{% endfor %}
+</select>
+
+<label>Course</label>
+<select name="course_code">
+{% for c in courses %}
+<option value="{{ c.course_code }}">{{ c.course_name }}</option>
+{% endfor %}
+</select>
+
+<label>Semester</label>
+<input type="number" name="semester" required>
+
+<label>Subject</label>
+<select name="subject_code">
+{% for s in subjects %}
+<option value="{{ s.subject_code }}">{{ s.subject_name }}</option>
+{% endfor %}
+</select>
+
+<label>Exam Date</label>
+<input type="date" name="exam_date" required>
+
+<label>Session</label>
+<select name="session">
+<option>FN</option>
+<option>AN</option>
+</select>
+
+<label>Hall</label>
+<input type="text" name="hall" required>
+
+<button type="submit">Save</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

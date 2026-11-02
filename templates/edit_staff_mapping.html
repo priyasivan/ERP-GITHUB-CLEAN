@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Staff Mapping</title>
+
+    <style>
+        body{
+            font-family:Arial;
+            background:#f4f4f4;
+        }
+
+        .container{
+            width:500px;
+            margin:40px auto;
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0 0 10px lightgray;
+        }
+
+        h2{
+            color:#b30000;
+            text-align:center;
+        }
+
+        input,select{
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+        }
+
+        button{
+            width:100%;
+            padding:12px;
+            background:#b30000;
+            color:white;
+            border:none;
+            font-size:16px;
+            border-radius:5px;
+        }
+
+        a{
+            text-decoration:none;
+            color:#b30000;
+            font-weight:bold;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+</a>
+<h2>Edit Staff Mapping</h2>
+
+<form method="POST">
+
+<label>Staff</label>
+<select name="staff_id">
+{% for s in staffs %}
+<option value="{{ s.staff_id }}"
+{% if s.staff_id == mapping.staff_id %}selected{% endif %}>
+{{ s.staff_id }}
+</option>
+{% endfor %}
+</select>
+
+<label>Department</label>
+<select name="dept_code">
+{% for d in departments %}
+<option value="{{ d.dept_code }}"
+{% if d.dept_code == mapping.dept_code %}selected{% endif %}>
+{{ d.dept_code }}
+</option>
+{% endfor %}
+</select>
+
+<label>Course</label>
+<select name="course_code">
+{% for c in courses %}
+<option value="{{ c.course_code }}"
+{% if c.course_code == mapping.course_code %}selected{% endif %}>
+{{ c.course_code }}
+</option>
+{% endfor %}
+</select>
+
+<label>Subject</label>
+<select name="subject_code">
+{% for sub in subjects %}
+<option value="{{ sub.subject_code }}"
+{% if sub.subject_code == mapping.subject_code %}selected{% endif %}>
+{{ sub.subject_code }}
+</option>
+{% endfor %}
+</select>
+
+<label>Semester</label>
+<input type="number" name="semester"
+value="{{ mapping.semester }}" required>
+
+<label>Section</label>
+<input type="text" name="section"
+value="{{ mapping.section }}" required>
+
+<button type="submit">Update Mapping</button>
+
+<br><br>
+
+<a href="/staff-mapping">⬅ Back</a>
+
+</form>
+
+</div>
+
+</body>
+</html>

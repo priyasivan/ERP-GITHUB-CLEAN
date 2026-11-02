@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Timetable - St. Xavier's College</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; }
+        .header-box { background: #b30000; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        .card-custom { border: none; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: white; padding: 20px; margin-bottom: 20px; }
+        .day-tab { padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; }
+    </style>
+</head>
+<body class="p-4">
+
+<div class="container" style="max-width: 1000px;">
+    
+    <div class="header-box d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="mb-1"><i class="bi bi-calendar3"></i> Faculty Timetable</h3>
+            <p class="mb-0 small">Today: {{ today_str }} | <strong>Today's Day Order: Day Order {{ today_day_order }}</strong></p>
+        </div>
+        <div>
+            <a href="/staff-dashboard" class="btn btn-outline-light btn-sm">← Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Day Order Switcher -->
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <span class="fw-bold text-muted small text-uppercase">Select Day Order:</span>
+                <div class="d-inline-flex gap-2 ms-2">
+                    {% for do in [1, 2, 3, 4, 5] %}
+                        <a href="/staff-timetable?day_order={{ do }}" 
+                           class="btn btn-sm {% if active_day_order == do %}btn-danger{% else %}btn-outline-secondary{% endif %}">
+                            Day Order {{ do }}
+                            {% if today_day_order == do %}<span class="badge bg-light text-dark ms-1">Today</span>{% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if active_day_order != today_day_order %}
+                <a href="/staff-timetable" class="btn btn-sm btn-outline-danger">Return to Today</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Timetable List -->
+    <div class="card-custom">
+        <h5 class="fw-bold text-dark mb-3">
+            Schedule for <strong>Day Order {{ active_day_order }}</strong>
+        </h5>
+
+        {% if timetable %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Period</th>
+                        <th>Time</th>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Section</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in timetable %}
+                    <tr>
+                        <td><span class="badge bg-secondary">Period {{ row.period_no }}</span></td>
+                        <td class="fw-semibold">{{ row.start_time_fmt }} - {{ row.end_time_fmt }}</td>
+                        <td><span class="fw-bold text-danger">{{ row.subject_code }}</span></td>
+                        <td>{{ row.subject_name }}</td>
+                        <td>{{ row.course_code }}</td>
+                        <td>Sem {{ row.semester }}</td>
+                        <td>Section {{ row.section }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-calendar-x fs-1 text-secondary"></i>
+            <p class="mt-2 mb-0">No classes assigned for Day Order {{ active_day_order }}.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

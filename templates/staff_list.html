@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Directory - ERP Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f4f6f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            padding: 30px;
+        }
+
+        .header-card {
+            background: white;
+            padding: 22px 28px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .title h2 {
+            margin: 0;
+            color: #b30000;
+            font-weight: 800;
+            font-size: 24px;
+        }
+
+        .title p {
+            margin: 4px 0 0 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .table thead th {
+            background: #b30000;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 14px 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .table tbody td {
+            padding: 13px 16px;
+            vertical-align: middle;
+            font-size: 13.5px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:hover {
+            background: #fff8f8;
+        }
+
+        .staff-id-badge {
+            font-family: monospace;
+            background: #ffebee;
+            color: #b30000;
+            padding: 4px 9px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .pass-badge {
+            font-family: monospace;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid" style="max-width: 1200px;">
+
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <a href="/dashboard" class="btn btn-outline-danger btn-sm fw-bold">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="/staff-login" target="_blank" class="btn btn-outline-secondary btn-sm fw-bold">
+            <i class="bi bi-box-arrow-up-right"></i> Open Staff Login Page
+        </a>
+    </div>
+
+    <div class="header-card">
+        <div class="title">
+            <h2><i class="bi bi-people-fill text-danger"></i> Faculty & Staff Directory</h2>
+            <p>Manage faculty profiles, login IDs, passwords, and department assignments</p>
+        </div>
+        <div>
+            <a href="/add-staff" class="btn btn-danger fw-bold">
+                <i class="bi bi-person-plus-fill me-1"></i> Add New Faculty
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-info d-flex align-items-center gap-2 py-2 mb-3">
+        <i class="bi bi-info-circle-fill fs-5 text-primary"></i>
+        <div style="font-size: 13px;">
+            <b>Staff Login Portal Info:</b> All staff members can log into the staff portal (<code>/staff-login</code>) using their unique <b>Staff ID</b> as the username and their assigned <b>Password</b>.
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Staff ID</th>
+                        <th>Staff Name</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Mobile</th>
+                        <th style="width: 120px;">Password</th>
+                        <th style="width: 160px; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in staffs %}
+                    <tr>
+                        <td><span class="staff-id-badge">{{ s.staff_id }}</span></td>
+                        <td><b>{{ s.staff_name }}</b></td>
+                        <td>
+                            <span class="badge {% if s.department == 'BCA' %}bg-info text-dark{% else %}bg-primary{% endif %}">
+                                {{ s.department }}
+                            </span>
+                        </td>
+                        <td>{{ s.designation }}</td>
+                        <td>{{ s.mobile or '-' }}</td>
+                        <td><span class="pass-badge">{{ s.password or '12345' }}</span></td>
+                        <td style="text-align: center;">
+                            <a href="{{ url_for('edit_staff', id=loop.index) }}" class="btn btn-warning btn-sm fw-bold me-1">
+                                <i class="bi bi-pencil-fill"></i> Edit
+                            </a>
+                            <a href="{{ url_for('delete_staff', id=loop.index) }}" class="btn btn-danger btn-sm fw-bold" onclick="return confirm('Are you sure you want to remove faculty member {{ s.staff_name }}?')">
+                                <i class="bi bi-trash-fill"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ERP Management System</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+	<style>
+		:root{--erp-red:#b30000;--erp-red-dark:#8a0000}
+		body{background:#f4f6f9;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+		.topbar{background:linear-gradient(90deg,var(--erp-red),#e53935);color:#fff;padding:14px 20px;box-shadow:0 3px 10px rgba(0,0,0,0.08)}
+		.college-name{font-size:1rem;opacity:.95}
+		.app-title{font-weight:700;letter-spacing:0.4px}
+		.sidebar{width:0;background:#fff;border-right:1px solid #eef0f2;min-height:calc(100vh - 64px)}
+		.sidebar .nav-link{color:#333;font-weight:600;padding:14px 20px}
+		.sidebar .nav-link.active{background:linear-gradient(90deg,rgba(179,0,0,0.06),transparent);color:var(--erp-red)}
+        .card-stat{
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.10);
+    border:0;
+    height:115px;
+    transition:0.3s;
+}
+
+.card-stat:hover{
+    transform:translateY(-5px);
+    box-shadow:0 18px 35px rgba(0,0,0,.15);
+
+}
+.card-stat .d-flex{
+    height:100%;
+    align-items:center;
+}
+.stat-icon{
+    width:60px;
+    height:60px;
+    border-radius:15px;
+    background:rgba(179,0,0,.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#b30000;
+    font-size:26px;
+}
+		.logout-btn{color:var(--erp-red);font-weight:700}
+		@media (max-width:991px){.sidebar{width:100%;min-height:auto;border-right:0}}
+	</style>
+</head>
+<body>
+
+	<header class="topbar d-flex align-items-center justify-content-between">
+		<div>
+			<div class="college-name">ST. XAVIER'S COLLEGE (AUTONOMOUS), PALAYAMKOTTAI</div>
+			<div class="app-title">ERP Management System</div>
+		</div>
+		<div class="d-flex align-items-center">
+
+    <div class="d-flex align-items-center">
+
+    <!-- Bell -->
+    <a href="/student-notification"
+       class="position-relative text-white me-3 text-decoration-none"
+       style="font-size:26px;">
+
+        🔔
+        {% if notif_count and notif_count > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 11px;">
+            {{ notif_count }}
+        </span>
+        {% endif %}
+    </a>
+
+    <!-- Sidebar Button -->
+    <button class="btn btn-light"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#studentMenu">
+
+        ☰
+
+    </button>
+
+    <span class="text-white ms-2">
+        Student
+    </span>
+
+</div>
+</div>
+	</header>
+
+	<div>
+
+		<main class="flex-grow-1 p-4">
+			<div class="container-fluid">
+				<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Student Dashboard</h3>
+        <p class="text-muted mb-0">Welcome, {{ student_name }} 👋</p>
+    </div>
+</div>
+
+{% if approved_cert %}
+<div class="alert alert-success d-flex align-items-center justify-content-between p-3 mb-4 shadow-sm border-0 rounded-3" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 6px solid #2e7d32 !important;">
+    <div class="d-flex align-items-center gap-3">
+        <div class="fs-1 text-success">
+            <i class="bi bi-patch-check-fill"></i>
+        </div>
+        <div>
+            <h5 class="fw-bold text-success mb-1">🎉 Certificate Request Approved!</h5>
+            <p class="mb-0 text-dark" style="font-size: 14px;">
+                Your application for <b>{{ approved_cert.certificate_type }}</b> has been approved by the Principal. You can download the digitally signed copy immediately, or collect the hard copy from <b>College Office Room 102</b>.
+            </p>
+        </div>
+    </div>
+    <div>
+        <a href="/download-certificate/{{ approved_cert.request_id }}" class="btn btn-success fw-bold text-nowrap shadow-sm">
+            <i class="bi bi-download me-1"></i> Download Certificate
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{% if rejected_cert %}
+<div class="alert alert-danger d-flex align-items-center justify-content-between p-3 mb-4 shadow-sm border-0 rounded-3" style="background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border-left: 6px solid #c62828 !important;">
+    <div class="d-flex align-items-center gap-3">
+        <div class="fs-1 text-danger">
+            <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div>
+            <h5 class="fw-bold text-danger mb-1">❌ Certificate Request Rejected</h5>
+            <p class="mb-1 text-dark" style="font-size: 14px;">
+                Your application for <b>{{ rejected_cert.certificate_type }}</b> has been rejected by the Administration.
+            </p>
+            <div class="p-2 px-3 mt-1 rounded-2" style="background: rgba(198, 40, 40, 0.08); border: 1px dashed #c62828;">
+                <span class="text-danger fw-bold" style="font-size: 13.5px;">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Reason for Rejection:
+                </span>
+                <span class="text-dark fw-bold ms-1" style="font-size: 13.5px;">
+                    {{ rejected_cert.rejection_reason or 'College / Semester fee dues pending. Please contact College Office.' }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/apply-certificate" class="btn btn-danger fw-bold text-nowrap shadow-sm">
+            <i class="bi bi-arrow-repeat me-1"></i> Re-Apply
+        </a>
+        <a href="/my-certificate-requests" class="btn btn-outline-danger fw-bold text-nowrap shadow-sm">
+            <i class="bi bi-list-check me-1"></i> View Requests
+        </a>
+    </div>
+</div>
+{% endif %}
+				<div class="row g-2">
+
+    <!-- Apply Certificate -->
+    <div class="col-md-6 col-lg-4">
+        <a href="/apply-certificate" class="text-decoration-none text-dark">
+            <div class="card card-stat p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="h5 fw-bold">📜 Apply Certificate</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+    <a href="/my-certificate-requests" class="text-decoration-none text-dark">
+        <div class="card card-stat p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="h5 fw-bold">📋 My Certificate Requests</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="bi bi-file-earmark-check-fill"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+     
+    <div class="col-md-6 col-lg-4">
+    <a href="/digital-locker" class="text-decoration-none text-dark">
+        <div class="card card-stat p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="h5 fw-bold">🔐 Digital Locker</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="bi bi-safe-fill"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+    <!-- Apply Scholarship -->
+    <div class="col-md-6 col-lg-4">
+        <a href="/apply-scholarship" class="text-decoration-none text-dark">
+            <div class="card card-stat p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="h5 fw-bold">🎓 Apply Scholarship</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+     
+    <div class="col-md-6 col-lg-4">
+    <a href="/my-scholarship" class="text-decoration-none text-dark">
+        <div class="card card-stat p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="h5 fw-bold">📋 My Scholarship Status</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+
+    <!-- My Attendance -->
+    <div class="col-md-6 col-lg-4">
+        <a href="/student-attendance" class="text-decoration-none text-dark">
+            <div class="card card-stat p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="h5 fw-bold">📊 My Attendance</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-pie-chart-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- My Timetable -->
+<div class="col-md-6 col-lg-4">
+    <a href="/student-timetable" class="text-decoration-none text-dark">
+        <div class="card card-stat p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="h5 fw-bold">📚 My Timetable</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="bi bi-calendar-week-fill"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+    <!-- Exam Timetable -->
+    <div class="col-md-6 col-lg-4">
+        <a href="/student-exam-timetable"class="text-decoration-none text-dark">
+            <div class="card card-stat p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="h5 fw-bold">📅 Exam Timetable</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-calendar-event-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Circulars -->
+    <div class="col-md-6 col-lg-4">
+        <a href="/student-circular" class="text-decoration-none text-dark">
+            <div class="card card-stat p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="h5 fw-bold">📢 View Circulars</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-megaphone-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Events -->
+    <div class="col-md-6 col-lg-4">
+        <a href="/student-events" class="text-decoration-none text-dark">
+            <div class="card card-stat p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="h5 fw-bold">🎉 View Events</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    
+
+    <!-- Profile -->
+    <div class="col-md-6 col-lg-4">
+        <a href="/student-profile" class="text-decoration-none text-dark">
+            <div class="card card-stat p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="h5 fw-bold">👤 My Profile</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    
+
+</div>
+    
+
+</div>
+				</div>
+
+				
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+    <div class="offcanvas offcanvas-start"
+     tabindex="-1"
+     id="studentMenu">
+
+<div class="offcanvas-header bg-danger text-white">
+
+<h5>Student Panel</h5>
+
+<button type="button"
+        class="btn-close btn-close-white"
+        data-bs-dismiss="offcanvas"></button>
+
+</div>
+
+<div class="offcanvas-body">
+
+<div class="list-group">
+
+<a href="/student-dashboard"
+class="list-group-item list-group-item-action">
+🏠 Dashboard
+</a>
+
+<a href="/apply-certificate"
+class="list-group-item list-group-item-action">
+📜 Apply Certificate
+</a>
+
+<a href="/my-certificate-requests"
+class="list-group-item list-group-item-action">
+📋 My Certificate Requests
+</a>
+
+<a href="/digital-locker"
+class="list-group-item list-group-item-action">
+🔐 Digital Locker
+</a>
+
+<a href="/apply-scholarship"
+class="list-group-item list-group-item-action">
+🎓 Apply Scholarship
+</a>
+
+<a href="/my-scholarship"
+class="list-group-item list-group-item-action">
+🏅 My Scholarship Status
+</a>
+
+<a href="/student-attendance"
+class="list-group-item list-group-item-action">
+📊 My Attendance
+</a>
+
+<a href="/student-timetable"
+class="list-group-item list-group-item-action">
+📚 My Timetable
+</a>
+
+<a href="/student-exam-timetable"
+class="list-group-item list-group-item-action">
+📅 Exam Timetable
+</a>
+
+<a href="/student-circular"
+class="list-group-item list-group-item-action">
+📢 Circulars
+</a>
+
+<a href="/student-events"
+class="list-group-item list-group-item-action">
+🎉 Events
+</a>
+
+<a href="/student-notification"
+class="list-group-item list-group-item-action">
+🔔 Notifications
+</a>
+
+<a href="/student-profile"
+class="list-group-item list-group-item-action">
+👤 My Profile
+</a>
+
+<hr>
+
+<a href="/student-logout"
+class="list-group-item list-group-item-action text-danger fw-bold">
+🚪 Logout
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

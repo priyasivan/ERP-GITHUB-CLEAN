@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Certificate Requests</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f4f4;
+}
+
+.container{
+width:95%;
+margin:30px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:#b30000;
+color:white;
+padding:10px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+.pending{
+color:orange;
+font-weight:bold;
+}
+
+.approved{
+color:green;
+font-weight:bold;
+}
+
+.rejected{
+color:red;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<div class="mb-3">
+    <a href="/dashboard" class="btn btn-outline-danger">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+<h2>Certificate Requests</h2>
+
+<table>
+
+<tr>
+<th>Reg No</th>
+<th>Name</th>
+<th>Father Name</th>
+<th>Mobile</th>
+<th>Academic Year</th>
+<th>Department</th>
+<th>Certificate</th>
+<th>Purpose</th>
+<th>Payment</th>
+<th>Transaction ID</th>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+{% for row in requests %}
+
+<tr>
+
+<td>{{ row.student_regno }}</td>
+<td>{{ row.student_name }}</td>
+<td>{{ row.father_name }}</td>
+<td>{{ row.mobile_no }}</td>
+<td>{{ row.academic_year }}</td>
+<td>{{ row.department }}</td>
+<td>{{ row.certificate_type }}</td>
+<td>{{ row.purpose }}</td>
+<td>
+    {% if row.payment_status == "Paid" %}
+        <span style="background:#e8f5e9; color:#2e7d32; font-weight:bold; padding:4px 9px; border-radius:12px; font-size:12px;">₹50 Paid</span>
+    {% else %}
+        <span style="background:#fff3e0; color:#e65100; font-weight:bold; padding:4px 9px; border-radius:12px; font-size:12px;">Pending</span>
+    {% endif %}
+</td>
+<td>
+    {% if row.transaction_id %}
+        <code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:12px; font-weight:bold; color:#0f172a;">{{ row.transaction_id }}</code>
+    {% else %}
+        <span style="color:#94a3b8;">-</span>
+    {% endif %}
+</td>
+<td>{{ row.request_date }}</td>
+
+<td>
+
+{% if row.status=="Pending" %}
+<span class="pending">Pending</span>
+
+{% elif row.status=="Approved" %}
+<span class="approved">Approved</span>
+
+{% else %}
+<span class="rejected">Rejected</span>
+{% if row.rejection_reason %}
+<div style="font-size:11px; color:#c62828; margin-top:4px; font-weight:bold; max-width:180px; word-wrap:break-word;">
+    Reason: {{ row.rejection_reason }}
+</div>
+{% endif %}
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if row.status=="Pending" %}
+<a href="/approve-request/{{ row.request_id }}" style="background:#2e7d32; color:white; padding:5px 10px; text-decoration:none; border-radius:4px; font-weight:bold; font-size:12px;">
+Approve
+</a>
+<button type="button" 
+        onclick="openRejectModal('{{ row.request_id }}', '{{ row.student_name }}', '{{ row.certificate_type }}')"
+        style="background:#c62828; color:white; padding:5px 10px; border:none; border-radius:4px; font-weight:bold; font-size:12px; margin-left:4px; cursor:pointer;">
+Reject
+</button>
+{% elif row.status=="Approved" %}
+<span style="color:#2e7d32; font-weight:bold;">✓ Approved</span>
+{% else %}
+<span style="color:#c62828; font-weight:bold;">✗ Rejected</span>
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+<!-- Rejection Reason Modal -->
+<div id="rejectModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:10px; width:450px; max-width:90%; padding:25px; box-shadow:0 10px 30px rgba(0,0,0,0.3); font-family:Arial, sans-serif;">
+        <h3 style="margin-top:0; color:#b30000; font-size:18px; border-bottom:2px solid #b30000; padding-bottom:8px;">
+            ⚠️ Reject Certificate Request
+        </h3>
+        <p style="font-size:14px; color:#444; margin-bottom:15px;" id="modalStudentInfo"></p>
+        
+        <form id="rejectForm" method="POST" action="">
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:6px; color:#333;">Select Common Reason:</label>
+            <select id="quickReasonSelect" onchange="applyQuickReason()" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc; font-size:13px; margin-bottom:12px;">
+                <option value="">-- Choose or type custom reason below --</option>
+                <option value="College / Semester tuition fee dues pending. Please clear dues at Accounts Office.">1. Semester Tuition Fee Dues Pending</option>
+                <option value="Attendance percentage is below 75%. HOD permission required for Bonafide certificate.">2. Attendance Shortage (<75%)</option>
+                <option value="Certificate processing fee (₹50) payment not verified or Transaction ID invalid.">3. ₹50 Processing Fee / Transaction ID Invalid</option>
+                <option value="Unclear purpose mentioned. Please specify clear purpose (e.g. Bank Loan, Passport, Bus Pass).">4. Purpose Unclear / Invalid</option>
+                <option value="Duplicate request. Certificate has already been issued for this academic year.">5. Duplicate Request / Already Issued</option>
+                <option value="Department / Library No-Due clearance required before certificate issue.">6. Library / Department Clearance Pending</option>
+            </select>
+
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:6px; color:#333;">Rejection Reason (Sent to Student Dashboard):</label>
+            <textarea id="rejectionReasonInput" name="rejection_reason" rows="3" required placeholder="Enter the reason why this application is rejected..." style="width:100%; box-sizing:border-box; padding:10px; border-radius:5px; border:1px solid #ccc; font-size:13px; resize:vertical;"></textarea>
+
+            <div style="margin-top:18px; text-align:right;">
+                <button type="button" onclick="closeRejectModal()" style="background:#e0e0e0; color:#333; border:none; padding:8px 16px; border-radius:5px; font-weight:bold; cursor:pointer; margin-right:8px;">Cancel</button>
+                <button type="submit" style="background:#c62828; color:white; border:none; padding:8px 16px; border-radius:5px; font-weight:bold; cursor:pointer;">Confirm Reject</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openRejectModal(requestId, studentName, certType) {
+    document.getElementById("modalStudentInfo").innerHTML = "Rejecting request for <b>" + studentName + "</b> (" + certType + "). The student will see this reason on their dashboard.";
+    document.getElementById("rejectForm").action = "/reject-request/" + requestId;
+    document.getElementById("rejectionReasonInput").value = "College / Semester tuition fee dues pending. Please clear dues at Accounts Office.";
+    document.getElementById("quickReasonSelect").selectedIndex = 1;
+    document.getElementById("rejectModal").style.display = "flex";
+}
+
+function applyQuickReason() {
+    var sel = document.getElementById("quickReasonSelect");
+    if (sel.value) {
+        document.getElementById("rejectionReasonInput").value = sel.value;
+    }
+}
+
+function closeRejectModal() {
+    document.getElementById("rejectModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    var modal = document.getElementById("rejectModal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+</body>
+</html>

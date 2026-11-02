@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Certificate</title>
+
+    <style>
+
+        body{
+            font-family:Times New Roman;
+            margin:70px;
+        }
+
+        h1{
+            text-align:center;
+        }
+
+        p{
+            font-size:20px;
+            line-height:40px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>ST. XAVIER'S COLLEGE (AUTONOMOUS)</h1>
+
+<hr>
+
+<p>
+
+This is to certify that
+
+<b>{{ certificate.student_name }}</b>
+
+(Reg No :
+
+<b>{{ certificate.student_regno }}</b>)
+
+is a bonafide student of
+
+<b>{{ certificate.department }}</b>.
+
+</p>
+
+<p>
+
+Certificate :
+
+<b>{{ certificate.certificate_type }}</b>
+
+</p>
+
+<p>
+
+Purpose :
+
+<b>{{ certificate.purpose }}</b>
+
+</p>
+
+<br><br><br>
+
+<p style="text-align:right">
+
+Principal
+
+</p>
+
+</body>
+
+</html>

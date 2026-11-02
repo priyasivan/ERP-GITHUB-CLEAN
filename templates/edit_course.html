@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Course</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f2f2f2;
+}
+
+.container{
+width:500px;
+margin:40px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px lightgray;
+}
+
+h2{
+text-align:center;
+color:#b30000;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:8px;
+margin-bottom:15px;
+}
+
+.btn{
+background:#b30000;
+color:white;
+border:none;
+padding:10px 20px;
+cursor:pointer;
+margin-right:10px;
+}
+
+.cancel{
+background:gray;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<a href="/course" class="btn btn-outline-secondary mb-3">
+    ← Back
+</a>
+
+<form method="POST">
+
+<label>Course Code</label>
+<input type="text" name="course_code" value="{{ course.course_code }}" required>
+
+<label>Course Name</label>
+<input type="text" name="course_name" value="{{ course.course_name }}" required>
+
+<label>Department</label>
+
+<select name="dept_code">
+{% for d in departments %}
+<option value="{{ d.dept_code }}" {% if d.dept_code == course.dept_code %}selected{% endif %}>
+{{ d.dept_code }}
+</option>
+{% endfor %}
+</select>
+
+<label>Duration</label>
+<input type="text" name="duration" value="{{ course.duration }}" required>
+
+<button type="submit" class="btn">Update</button>
+
+<a href="/course">
+    <button type="button" class="btn cancel">Cancel</button>
+</a>
+
+</form>
+
+</div>
+
+</body>
+</html>

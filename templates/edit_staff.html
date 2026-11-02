@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Staff</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f2f2f2;
+}
+
+.container{
+width:500px;
+margin:40px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px lightgray;
+}
+
+h2{
+text-align:center;
+color:#b30000;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:8px;
+margin-bottom:15px;
+}
+
+.btn{
+background:#b30000;
+color:white;
+border:none;
+padding:10px 20px;
+cursor:pointer;
+margin-right:10px;
+}
+
+.cancel{
+background:gray;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Edit Staff</h2>
+
+<form method="POST">
+
+<label>Staff ID</label>
+<input type="text" name="staff_id" value="{{ staff.staff_id }}" required>
+
+<label>Staff Name</label>
+<input type="text" name="staff_name" value="{{ staff.staff_name }}" required>
+
+<label>Department</label>
+
+<select name="department">
+{% for d in departments %}
+<option value="{{ d.dept_code }}" {% if d.dept_code == staff.department %}selected{% endif %}>
+{{ d.dept_code }}
+</option>
+{% endfor %}
+</select>
+
+<label>Designation</label>
+<input type="text" name="designation" value="{{ staff.designation }}" required>
+
+<label>Mobile</label>
+<input type="text" name="mobile" value="{{ staff.mobile }}" required>
+
+<label>Login Password</label>
+<input type="text" name="password" value="{{ staff.password or '12345' }}" required>
+
+<button type="submit" class="btn">
+Update
+</button>
+
+<a href="/staff">
+<button type="button" class="btn cancel">
+Cancel
+</button>
+</a>
+
+</form>
+
+</div>
+
+</body>
+</html>

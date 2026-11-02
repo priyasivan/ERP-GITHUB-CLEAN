@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Subject</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+}
+
+.container{
+width:500px;
+margin:40px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px lightgray;
+}
+
+h2{
+text-align:center;
+color:#b30000;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:8px;
+margin-bottom:15px;
+}
+
+.btn{
+background:#b30000;
+color:white;
+border:none;
+padding:10px 20px;
+cursor:pointer;
+margin-right:10px;
+}
+
+.cancel{
+background:gray;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Add Subject</h2>
+
+<form method="POST">
+
+<label>Subject Code</label>
+<input type="text" name="subject_code" required>
+
+<label>Subject Name</label>
+<input type="text" name="subject_name" required>
+
+<label>Department</label>
+
+<select name="dept_code">
+
+{% for d in departments %}
+
+<option value="{{ d.dept_code }}">
+{{ d.dept_code }}
+</option>
+
+{% endfor %}
+
+</select>
+
+<label>Semester</label>
+
+<input type="number" name="semester" required>
+
+<button type="submit" class="btn">
+Save
+</button>
+
+<a href="/subject">
+<button type="button" class="btn cancel">
+Cancel
+</button>
+</a>
+
+</form>
+
+</div>
+
+</body>
+</html>

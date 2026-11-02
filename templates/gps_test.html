@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GPS Test</title>
+</head>
+<body>
+
+<h2>GPS Navigation Test</h2>
+
+<button onclick="getLocation()">Get My Location</button>
+
+<p id="demo"></p>
+
+<script>
+
+function getLocation(){
+
+    if(navigator.geolocation){
+
+        navigator.geolocation.getCurrentPosition(showPosition);
+
+    }else{
+
+        document.getElementById("demo").innerHTML="GPS not supported";
+
+    }
+
+}
+
+function showPosition(position){
+
+    let lat=position.coords.latitude;
+    let lon=position.coords.longitude;
+
+    document.getElementById("demo").innerHTML=
+    "Latitude : "+lat+"<br>Longitude : "+lon;
+
+}
+
+</script>
+
+</body>
+</html>
