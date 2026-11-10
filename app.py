@@ -30,7 +30,7 @@ def format_time_value(val):
     return str(val)
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY")
+app.secret_key = os.environ.get("SECRET_KEY")
 
 import mysql.connector
 
@@ -2881,4 +2881,4 @@ def staff_profile():
         staff=staff
     )
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
