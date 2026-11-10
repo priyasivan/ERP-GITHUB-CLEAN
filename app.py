@@ -30,7 +30,7 @@ def format_time_value(val):
     return str(val)
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY")
+app.secret_key = os.environ.get("SECRET_KEY") or os.environ.get("FLASK_SECRET_KEY") or "erp-local-fallback-key"
 
 import mysql.connector
 
